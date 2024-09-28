@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "vpc-${var.enviromment_name}"
+  name = "vpc-${var.product}-${terraform.workspace}"
   cidr = var.vpc_cdir
 
   azs             = ["us-east-2a", "us-east-2b", "us-east-2c"]
@@ -14,6 +14,6 @@ module "vpc" {
 
   tags = {
     Terraform = "true"
-    Environment = "${var.enviromment_name}"
+    Environment = "${var.product}-${terraform.workspace}"
   }
 }

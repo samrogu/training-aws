@@ -1,7 +1,12 @@
 
-variable "enviromment_name" {
+variable "region" {
   type = string
-  default = "dev"
+  default = "us-east-2"
+}
+
+variable "product" {
+  type = string
+  default = "tarjeta"
 }
 
 variable "public_subnets" {
