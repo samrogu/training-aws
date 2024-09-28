@@ -36,5 +36,16 @@ terraform workspace select dev
 ```
 
 
+#Trabajando con terragrunt
+
+```
+terragrunt plan
+terragrunt apply
+terragrunt destroy
+
+```
+
+
+
 
 
