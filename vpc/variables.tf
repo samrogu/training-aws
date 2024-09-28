@@ -29,3 +29,9 @@ variable "vpc_cdir" {
     type = string
     default = "10.0.0.0/16"
 }
+
+
+variable "enable_nat_gateway" {
+  type = bool
+  default = false
+}
