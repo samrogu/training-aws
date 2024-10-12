@@ -4,7 +4,7 @@ module "vpc" {
   name = "vpc-${var.product}"
   cidr = var.vpc_cdir
 
-  azs             = ["us-east-2a", "us-east-2b", "us-east-2c"]
+  #azs             = ["us-east-2a", "us-east-2b", "us-east-2c"]
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
   database_subnets    = var.database_subnets
