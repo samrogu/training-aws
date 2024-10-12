@@ -35,3 +35,8 @@ variable "enable_nat_gateway" {
   type = bool
   default = false
 }
+
+variable "zones" {
+  type = list(string)
+  default = ["us-east-2a", "us-east-2b", "us-east-2c"]
+}
