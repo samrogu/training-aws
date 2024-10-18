@@ -18,7 +18,7 @@ EOF
 }
 
 inputs = {
-    product = "banca-digital-dev"
+    product = "database-dev"
     vpc_cdir = "173.0.0.0/16"
     public_subnets = ["173.0.4.0/26", "173.0.5.0/26", "173.0.6.0/26"]
     private_subnets = ["173.0.1.0/26", "173.0.2.0/26", "173.0.3.0/26"]
