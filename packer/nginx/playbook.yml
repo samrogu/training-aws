@@ -1,0 +1,25 @@
+ - name: Instalacion de Nginx
+   hosts: all
+   become: true
+   tasks:
+     - name: Actualizar paquetes y instalar
+       apt:
+        update_cache: yes
+        name:
+          - nginx
+          - git
+        state: present
+     - name: Copiar archivo de configuraciones
+       copy:
+         src: ./nginx.conf
+         dest: /etc/nginx/nginx.conf
+     - name: Copiar index Principal
+       copy:
+         src: ./index.html
+         dest: /var/www/html/index.html
+     - name: Reiniciar Nginx
+       service:
+         name: nginx
+         state: restarted
+
+     
