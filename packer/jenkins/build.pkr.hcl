@@ -34,6 +34,11 @@ source "amazon-ebs" "amazon_linux" {
   tags = {
     Name = "AmazonLinux-Jenkins-Docker"
   }
+
+  vpc_id = "vpc-0790dc273515d0733"
+
+  # Subred dentro de la VPC donde se lanzará la instancia
+  subnet_id = "subnet-0a32d97d501c8cd4b"
 }
 
 # Define the provisioner for Ansible
