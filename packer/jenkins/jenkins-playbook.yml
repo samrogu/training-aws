@@ -1,0 +1,124 @@
+---
+- name: Install Jenkins, Docker, Packer, Terraform, and Plugins
+  hosts: all
+  become: true
+
+  tasks:
+    # Update all packages
+    - name: Update all packages
+      yum:
+        name: "*"
+        state: latest
+
+    # Install Java (required for Jenkins)
+    - name: Install Java
+      yum:
+        name: java-17-amazon-corretto
+        state: present
+
+    # Add Jenkins repository and install Jenkins
+    - name: Add Jenkins repository
+      yum_repository:
+        name: jenkins
+        description: Jenkins Repository
+        baseurl: https://pkg.jenkins.io/redhat-stable/
+        gpgcheck: yes
+        gpgkey: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+    - name: Install Jenkins
+      yum:
+        name: jenkins
+        state: present
+
+    - name: Start and enable Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: true
+
+    # Install Docker
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add Jenkins user to Docker group
+      user:
+        name: jenkins
+        groups: docker
+        append: true
+
+    # Install Packer
+    - name: Download Packer binary
+      get_url:
+        url: https://releases.hashicorp.com/packer/1.9.0/packer_1.9.0_linux_amd64.zip
+        dest: /tmp/packer.zip
+
+    - name: Unzip Packer binary
+      unarchive:
+        src: /tmp/packer.zip
+        dest: /usr/local/bin/
+        remote_src: true
+
+    - name: Verify Packer installation
+      command: packer --version
+
+    # Install Terraform
+    - name: Download Terraform binary
+      get_url:
+        url: https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+        dest: /tmp/terraform.zip
+
+    - name: Unzip Terraform binary
+      unarchive:
+        src: /tmp/terraform.zip
+        dest: /usr/local/bin/
+        remote_src: true
+
+    - name: Verify Terraform installation
+      command: terraform --version
+
+    # Install Jenkins plugins using CLI
+    - name: Download Jenkins CLI
+      get_url:
+        url: "http://localhost:8080/jnlpJars/jenkins-cli.jar"
+        dest: /tmp/jenkins-cli.jar
+
+    - name: Wait for Jenkins to be ready
+      wait_for:
+        host: "localhost"
+        port: 8080
+        delay: 30
+        timeout: 300
+        state: started
+    - name: Read initial password
+      ansible.builtin.command:
+        cmd: "cat /var/lib/jenkins/secrets/initialAdminPassword"
+      register: jenkins_pass_output
+    - name: Guardar el password en una variable
+      ansible.builtin.set_fact:
+        jenkins_password: "{{ jenkins_pass_output.stdout }}"
+    # Install Jenkins plugins necessary for Packer execution
+    - name: Install Jenkins plugins for Packer
+      command: java -jar /tmp/jenkins-cli.jar -s http://localhost:8080  -auth admin:{{ jenkins_password }} install-plugin \
+        docker-workflow \
+        git \
+        blueocean \
+        pipeline-stage-view \
+        workflow-aggregator \
+        ansible \
+        amazon-ecr \
+        matrix-auth \
+        build-timeout \
+        job-dsl \
+        git-parameter \
+        packer
+
+    - name: Restart Jenkins after plugin installation
+      command: java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 -auth admin:{{ jenkins_password }} safe-restart
