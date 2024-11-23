@@ -11,6 +11,18 @@
         state: latest
 
     # Install Java (required for Jenkins)
+    - name: Install ansible
+      yum:
+        name: ansible
+        state: present
+    
+    # Install Java (required for Jenkins)
+    - name: Install git
+      yum:
+        name: git
+        state: present
+
+    # Install Java (required for Jenkins)
     - name: Install Java
       yum:
         name: java-17-amazon-corretto
